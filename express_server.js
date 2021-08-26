@@ -28,11 +28,6 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-app.post('/urls', (req, res) => {
-  console.log(req.body);
-  res.send(generateRandomString());
-});
-
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
@@ -47,6 +42,24 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.post('/urls', (req, res) => {
+  console.log(req.body);
+  const longURL = req.body.longURL;
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = longURL;
+  console.log(urlDatabase);
+  res.redirect(`/urls/${shortURL}`);
+});
+
 app.get('/henlo', (req, res) => {
   res.send('<html><body>henlo <b>bröther</b></body></html>')
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    res.send('Invalid URL! Click <a href="/urls">here</a> to go back to the database.');
+  }
 });
