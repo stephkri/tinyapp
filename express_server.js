@@ -1,6 +1,12 @@
 const express = require('express');
 const app = express();
 const PORT = 8080;
+const bodyParser = require('body-parser');
+const generateRandomString = function() {
+ return Math.random().toString(36).substr(2, 6);
+};
+
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs");
 
@@ -22,8 +28,17 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+app.post('/urls', (req, res) => {
+  console.log(req.body);
+  res.send(generateRandomString());
+});
+
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
+});
+
+app.get('/urls/new', (req, res) => {
+  res.render('urls_new');
 });
 
 app.get('/urls/:shortURL', (req, res) => {
