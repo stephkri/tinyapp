@@ -65,13 +65,16 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  console.log("Delete something");
   const longURL = urlDatabase[req.params.shortURL];
   if (longURL) {
     delete urlDatabase[req.params.shortURL];
-    console.log(urlDatabase, "object string lalala");
     res.redirect('/urls');
   } else {
     res.send('Invalid URL! Click <a href="/urls">here</a> to go back to the database.');
   }
+});
+
+app.post('/urls/:id', (req, res) => {
+  urlDatabase[req.params.id] = req.body.newURL;
+  res.redirect('/urls');
 });
