@@ -54,11 +54,11 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  console.log(req.body);
+  //console.log(req.body);
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = longURL;
-  console.log(urlDatabase);
+  //console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -88,8 +88,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   urlDatabase[req.params.id] = req.body.newURL;
   res.redirect('/urls');
-<<<<<<< HEAD
-=======
 });
 
 app.post('/login', (req, res) => {
@@ -100,5 +98,4 @@ app.post('/login', (req, res) => {
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
   res.redirect('/urls');
->>>>>>> feature/cookies
 });
