@@ -16,11 +16,7 @@
         <button type="submit" class="btn btn-secondary">Logout</button>
       </form>
     <% } else { %>
-    <form method="POST" action="/login">
-      <input type="text" name="email" id="email" placeholder="Email">
-      <input type="text" name="password" id="password" placeholder="Password">
-      <button type="submit" class="btn btn-success">Login</button>
-    </form>
+    <a class="btn btn-success" href="/login" role="button">Login</a>
     <a class="btn btn-primary" href="/register" role="button">Register</a>
     <% } %>
   </nav>

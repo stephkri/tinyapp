@@ -15,6 +15,14 @@ const emailLookup = function(object, email) {
   }
   return false;
 };
+const passwordLookup = function(object, email, password) {
+  for (const user in object) {
+    if (object[user].email === email && object[user].password === password) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 
@@ -104,6 +112,14 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   urlDatabase[req.params.id] = req.body.newURL;
   res.redirect('/urls');
+});
+
+app.get('/login', (req, res) => {
+  const templateVars = {
+    urls: urlDatabase,
+    user: req.cookies['user']
+  };
+  res.render("urls_login", templateVars);
 });
 
 app.post('/login', (req, res) => {
