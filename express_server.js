@@ -63,18 +63,29 @@ app.get('/urls.json', (req, res) => {
 });
 
 app.get('/urls/new', (req, res) => {
-  const templateVars = {
-    userID: req.cookies['user_id']
-  };
-  res.render("urls_new", templateVars);
+  const userID = req.cookies['user_id'];
+  const user = users[userID];
+  if (userID) {
+    const templateVars = {
+      userID,
+      email: user ? user.email : null
+    };
+    res.render("urls_new", templateVars);
+  } else {
+    res.status(403);
+    res.send('You must register and login to make a new URL. ' + hereGoBack);
+  }
 });
 
 app.get('/urls/:shortURL', (req, res) => {
+  const userID = req.cookies['user_id'];
+  const user = users[userID];
   const short = req.params.shortURL;
   const templateVars = {
     shortURL: short,
     longURL: urlDatabase[short],
-    userID: req.cookies['user_id']
+    userID,
+    email: user ? user.email : null
   };
   res.render("urls_show", templateVars);
 });
@@ -118,9 +129,12 @@ app.post('/urls/:id', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
+  const userID = req.cookies['user_id'];
+  const user = users[userID];
   const templateVars = {
     urls: urlDatabase,
-    userID: req.cookies['user_id']
+    userID,
+    email: user ? user.email : null
   };
   res.render("urls_login", templateVars);
 });
@@ -152,9 +166,12 @@ app.post('/logout', (req, res) => {
 
 app.get('/register', (req, res) => {
   console.log('Get register cookies', req.cookies);
+  const userID = req.cookies['user_id'];
+  const user = users[userID];
   const templateVars = {
     urls: urlDatabase,
-    userID: req.cookies['user_id']
+    userID,
+    email: user ? user.email : null
   };
   res.render("urls_register", templateVars);
 });
