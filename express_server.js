@@ -47,10 +47,13 @@ app.get('/', (req, res) => {
 
 app.get('/urls', (req, res) => {
   console.log('Get URLs cookies', req.cookies);
-  console.log('Users object:', users)
+  console.log('Users object:', users);
+  const userID = req.cookies['user_id'];
+  const user = users[userID];
   const templateVars = {
     urls: urlDatabase,
-    user: req.cookies['user']
+    userID,
+    email: user ? user.email : null
   };
   res.render('urls_index', templateVars);
 });
@@ -61,7 +64,7 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   const templateVars = {
-    user: req.cookies['user']
+    userID: req.cookies['user_id']
   };
   res.render("urls_new", templateVars);
 });
@@ -71,7 +74,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: short,
     longURL: urlDatabase[short],
-    user: req.cookies['user']
+    userID: req.cookies['user_id']
   };
   res.render("urls_show", templateVars);
 });
@@ -117,7 +120,7 @@ app.post('/urls/:id', (req, res) => {
 app.get('/login', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    user: req.cookies['user']
+    userID: req.cookies['user_id']
   };
   res.render("urls_login", templateVars);
 });
@@ -135,7 +138,7 @@ app.post('/login', (req, res) => {
   }
   console.log(`UserID: ${userID}`);
   if (matches) {
-    res.cookie('user', users[userID]);
+    res.cookie('user_id', userID);
     res.redirect('/urls');
   } else {
     res.send('Invalid username or password. ' + hereGoBack);
@@ -143,7 +146,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user');
+  res.clearCookie('user_id');
   res.redirect('/urls');
 });
 
@@ -151,7 +154,7 @@ app.get('/register', (req, res) => {
   console.log('Get register cookies', req.cookies);
   const templateVars = {
     urls: urlDatabase,
-    user: req.cookies['user']
+    userID: req.cookies['user_id']
   };
   res.render("urls_register", templateVars);
 });
@@ -167,14 +170,14 @@ app.post('/register', (req, res) => {
     password
   };
   if (emailLookup(users, email)) {
-    res.status(400);
+    res.status(403);
     res.send('The email you have provided is already in our user database. ' + hereGoBack);
   } else if (email === "" || password === "") {
-    res.status(400);
+    res.status(403);
     res.send('Please enter an email and password. ' + hereGoBack);
   } else {
     users[id] = user;
-    res.cookie('user', user);
+    res.cookie('user_id', user.id);
     res.redirect('/urls');
   }
 });
