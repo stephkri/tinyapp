@@ -10,7 +10,7 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% console.log(locals) %>
+    <% console.log('Locals:', locals) %>
     <% if (locals.userID) { %>
       <form method="POST" action="/logout">
         Logged in as <%= locals.email %>

@@ -25,6 +25,7 @@ const passwordLookup = function(object, email, password) {
 };
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
+const hereLogin = 'Click <a href="/login">here</a> to login.';
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -73,7 +74,7 @@ app.get('/urls/new', (req, res) => {
     res.render("urls_new", templateVars);
   } else {
     res.status(403);
-    res.send('You must register and login to make a new URL. Click <a href="/login">here</a> to login.');
+    res.send('You must register and login to make a new URL. ' + hereLogin);
   }
 });
 
@@ -92,10 +93,15 @@ app.get('/urls/:shortURL', (req, res) => {
 
 app.post('/urls', (req, res) => {
   console.log('Post URLS cookies', req.cookies);
+  const userID = req.cookies['user_id'];
   console.log(users);
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = longURL;
+  //urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = {
+    longURL,
+    userID
+  }
   //console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
@@ -124,8 +130,14 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/urls/:id', (req, res) => {
-  urlDatabase[req.params.id] = req.body.newURL;
-  res.redirect('/urls');
+  console.log(`Req cookies:`, req.cookies);
+  if (req.cookies['user_id']) {
+    urlDatabase[req.params.id] = req.body.newURL;
+    res.redirect('/urls');
+  } else {
+    res.status(403);
+    res.send('You cannot edit this as you are not logged in. ' + hereLogin);
+  }
 });
 
 app.get('/login', (req, res) => {
