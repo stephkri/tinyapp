@@ -11,6 +11,7 @@
 <body>
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
+    <% if (locals.userID && Object.keys(urls).length !== 0) { %>
     <h3>My URLs</h3>
     <table class="table">
       <thead>
@@ -39,6 +40,13 @@
         <% } %>
       </tbody>
     </table>
+    <% } else if (locals.userID && Object.keys(urls).length === 0) { %>
+      <h3>No current URLs!</h3>
+      <p>Why not <a href="/urls/new">make a new URL</a> to get started.</p>
+    <% } else { %>
+      <h3>Error: You are not logged in</h3>
+      <p>Please <a href="/register">register</a> or <a href="/login">login</a> to view and edit URLs.</p>
+    <% } %>
   </main>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

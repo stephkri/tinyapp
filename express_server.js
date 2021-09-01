@@ -23,9 +23,21 @@ const passwordLookup = function(object, email, password) {
   }
   return false;
 };
+const urlsForUser = function(db, id) {
+  let newObj = {};
+  console.log('urlsForUser function:');
+  for (const url in db) {
+    console.log(db[url]);
+    if (db[url].userID === id) {
+      newObj[url] = db[url];
+    }
+  }
+  return newObj;
+};
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';
+const hereRegister = 'Click <a href="/register">here</a> for the register page.';
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -35,6 +47,7 @@ const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
 };
+console.log(urlDatabase);
 
 const users = {};
 
@@ -51,8 +64,9 @@ app.get('/urls', (req, res) => {
   console.log('Users object:', users);
   const userID = req.cookies['user_id'];
   const user = users[userID];
+  const userURLs = urlsForUser(urlDatabase, userID);
   const templateVars = {
-    urls: urlDatabase,
+    urls: userURLs,
     userID,
     email: user ? user.email : null
   };
@@ -66,23 +80,20 @@ app.get('/urls.json', (req, res) => {
 app.get('/urls/new', (req, res) => {
   const userID = req.cookies['user_id'];
   const user = users[userID];
-  if (userID) {
-    const templateVars = {
-      userID,
-      email: user ? user.email : null
-    };
-    res.render("urls_new", templateVars);
-  } else {
-    res.status(403);
-    res.send('You must register and login to make a new URL. ' + hereLogin);
-  }
+  const templateVars = {
+    userID,
+    email: user ? user.email : null
+  };
+  res.render("urls_new", templateVars);
 });
 
 app.get('/urls/:shortURL', (req, res) => {
   const userID = req.cookies['user_id'];
   const user = users[userID];
+  const userURLs = urlsForUser(urlDatabase, userID);
   const short = req.params.shortURL;
   const templateVars = {
+    urls: userURLs,
     shortURL: short,
     longURL: urlDatabase[short],
     userID,
@@ -112,7 +123,11 @@ app.get('/henlo', (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
-  if (longURL) {
+  console.log(req.cookies);
+  console.log(longURL);
+  if (longURL.userID) {
+    res.redirect(longURL.longURL);
+  } else if (longURL && !longURL['user_id']) {
     res.redirect(longURL);
   } else {
     res.send('Invalid URL! ' + hereGoBack);
@@ -120,7 +135,13 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
+  const userID = req.cookies['user_id'];
+  const user = users[userID];
   const longURL = urlDatabase[req.params.shortURL];
+  if (!user) {
+    res.status(403);
+    res.send('You must login before deleting a URL. ' + hereLogin);
+  }
   if (longURL) {
     delete urlDatabase[req.params.shortURL];
     res.redirect('/urls');
@@ -130,9 +151,15 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/urls/:id', (req, res) => {
-  console.log(`Req cookies:`, req.cookies);
+  // console.log('Req params:', req.params);
+  // console.log('Req body', req.body);
+  // console.log(`Req cookies:`, req.cookies);
+  const userID = req.cookies['user_id'];
   if (req.cookies['user_id']) {
-    urlDatabase[req.params.id] = req.body.newURL;
+    urlDatabase[req.params.id] = {
+      longURL: req.body.newURL,
+      userID
+    };
     res.redirect('/urls');
   } else {
     res.status(403);
@@ -167,7 +194,7 @@ app.post('/login', (req, res) => {
     res.cookie('user_id', userID);
     res.redirect('/urls');
   } else {
-    res.send('Invalid username or password. ' + hereGoBack);
+    res.send('Invalid username or password. ' + hereLogin);
   }
 });
 
@@ -200,10 +227,10 @@ app.post('/register', (req, res) => {
   };
   if (emailLookup(users, email)) {
     res.status(403);
-    res.send('The email you have provided is already in our user database. ' + hereGoBack);
+    res.send('The email you have provided is already in our user database. ' + hereRegister);
   } else if (email === "" || password === "") {
     res.status(403);
-    res.send('Please enter an email and password. ' + hereGoBack);
+    res.send('Please enter an email and password. ' + hereRegister);
   } else {
     users[id] = user;
     res.cookie('user_id', user.id);
