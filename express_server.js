@@ -73,7 +73,7 @@ app.get('/urls/new', (req, res) => {
     res.render("urls_new", templateVars);
   } else {
     res.status(403);
-    res.send('You must register and login to make a new URL. ' + hereGoBack);
+    res.send('You must register and login to make a new URL. Click <a href="/login">here</a> to login.');
   }
 });
 
