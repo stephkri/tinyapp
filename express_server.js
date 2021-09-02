@@ -3,11 +3,12 @@ const app = express();
 const PORT = 8080;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 
 const generateRandomString = function() {
  return Math.random().toString(36).substr(2, 6);
 };
-const emailLookup = function(object, email) {
+const emailExists = function(object, email) {
   for (const user in object) {
     if (object[user].email === email) {
       return true;
@@ -34,10 +35,19 @@ const urlsForUser = function(db, id) {
   }
   return newObj;
 };
+const getUserByEmail = function(obj, email) {
+  for (const user in obj) {
+    if (obj[user].email === email) {
+      return obj[user].id;
+    }
+  }
+  return null;
+};
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';
-const hereRegister = 'Click <a href="/register">here</a> for the register page.';
+const hereRegister = 'Click <a href="/register">here</a> to register a new user.';
+const hereLoginOrRegister = 'Click <a href="/register">here</a> to register a new user or click <a href="/login">here</a> to login as an existing user.';
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -179,22 +189,23 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
+  console.log('Login req body:', req.body);
+  console.log('Login req params:', req.params);
+  console.log('Login req cookies:', req.cookies);
+  console.log('Users in login request:', users);
   const email = req.body.email;
-  const password = req.body.password;
-  let matches = 0;
-  let userID = "";
-  for (const user in users) {
-    if (users[user].email === email && users[user].password === password) {
-      matches += 1;
-      userID += users[user].id;
-    }
-  }
+  const userID = getUserByEmail(users, email);
   console.log(`UserID: ${userID}`);
-  if (matches) {
-    res.cookie('user_id', userID);
-    res.redirect('/urls');
+  if (userID) {
+    const hashedPassword = users[userID].password;
+    if (bcrypt.compareSync(req.body.password, hashedPassword)) {
+      res.cookie('user_id', userID);
+      res.redirect('/urls');
+    } else {
+      res.send('Invalid password. ' + hereLogin);
+    }
   } else {
-    res.send('Invalid username or password. ' + hereLogin);
+    res.send('Invalid username. ' + hereLoginOrRegister);
   }
 });
 
@@ -219,13 +230,14 @@ app.post('/register', (req, res) => {
   console.log('Post register cookies', req.cookies);
   const email = req.body.emailAddress;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
   const user = {
     id,
     email,
-    password
+    password: hashedPassword
   };
-  if (emailLookup(users, email)) {
+  if (emailExists(users, email)) {
     res.status(403);
     res.send('The email you have provided is already in our user database. ' + hereRegister);
   } else if (email === "" || password === "") {
