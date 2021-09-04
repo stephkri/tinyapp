@@ -1,6 +1,6 @@
 const { assert } = require("chai");
 
-const { generateRandomString, emailExists, urlsForUser, getUserByEmail, sameUser } = require('../helpers.js');
+const { generateRandomString, emailExists, urlsForUser, getUserByEmail, isInUserURLs } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -65,16 +65,16 @@ describe('urlsForUser', () => {
   });
 });
 
-describe('sameUser', () => {
-  it('should return true if the user ID is the same as what\'s in the object', () => {
+describe('isInUserURLs', () => {
+  it('should return true if the link can be found in the object', () => {
     const userURLs = urlsForUser(testURLs, "7802sg");
-    const user = "7802sg";
-    assert.equal(sameUser(userURLs, user), true);
+    const short = "1gsd08";
+    assert.equal(isInUserURLs(userURLs, short), true);
   });
 
-  it('should return false if the user ID does not match what\'s in the object', () => {
+  it('should return false if the link cannot be found in the object', () => {
     const userURLs = urlsForUser(testURLs, "7802sg");
-    const user = "123456";
-    assert.equal(sameUser(userURLs, user), false);
+    const short = "sdagkj";
+    assert.equal(isInUserURLs(userURLs, short), false);
   });
 });

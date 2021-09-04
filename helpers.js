@@ -26,14 +26,6 @@ const getUserByEmail = function(obj, email) {
   }
   return null;
 };
-const sameUser = function(obj, user) {
-  for (const link in obj) {
-    if (obj[link].userID === user) {
-      return true;
-    }
-  }
-  return false;
-};
 const isInUserURLs = function(obj, link) {
   for (const url in obj) {
     if (url === link) {
@@ -43,4 +35,4 @@ const isInUserURLs = function(obj, link) {
   return false;
 }
 
-module.exports = { generateRandomString, emailExists, urlsForUser, getUserByEmail, sameUser, isInUserURLs };
+module.exports = { generateRandomString, emailExists, urlsForUser, getUserByEmail, isInUserURLs };
