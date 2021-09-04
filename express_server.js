@@ -70,11 +70,11 @@ app.get('/urls/:shortURL', (req, res) => {
   const userURLs = urlsForUser(urlDatabase, userID);
   if (isInUserURLs(userURLs, short)) {
     const templateVars = {
-    urls: userURLs,
-    shortURL: short,
-    longURL: urlDatabase[short],
-    userID: userID,
-    email: user ? user.email : null
+      urls: userURLs,
+      shortURL: short,
+      longURL: urlDatabase[short],
+      userID: userID,
+      email: user ? user.email : null
     };
     res.render("urls_show", templateVars);
   } else {
@@ -90,12 +90,12 @@ app.post('/urls', (req, res) => {
   urlDatabase[shortURL] = {
     longURL: longURL,
     userID: userID
-  }
+  };
   res.redirect(`/urls/${shortURL}`);
 });
 
 app.get('/henlo', (req, res) => {
-  res.send('<html><body>henlo <b>bröther</b></body></html>')
+  res.send('<html><body>henlo <b>bröther</b></body></html>');
 });
 
 app.get("/u/:shortURL", (req, res) => {

@@ -4,13 +4,13 @@ const { generateRandomString, emailExists, urlsForUser, getUserByEmail, isInUser
 
 const testUsers = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
   "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
@@ -20,7 +20,7 @@ const testURLs = {
   "1gsd08": { longURL: "http://dophix.it", userID: "7802sg" },
   "sdagkj": { longURL: "http://www.schagerl.com", userID: "123456" },
   "89sdf7": { longURL: "http://www.youtube.com", userID: "123456"}
-}
+};
 
 describe('getUserByEmail', () => {
   it('should return a user with valid email', () => {

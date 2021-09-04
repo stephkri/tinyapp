@@ -33,6 +33,6 @@ const isInUserURLs = function(obj, link) {
     }
   }
   return false;
-}
+};
 
 module.exports = { generateRandomString, emailExists, urlsForUser, getUserByEmail, isInUserURLs };
