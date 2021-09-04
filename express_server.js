@@ -25,7 +25,6 @@ const urlDatabase = {
   'b2xVn2': 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
 };
-console.log(urlDatabase);
 
 const users = {};
 
@@ -38,8 +37,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
-  console.log('Get URLs cookies', req.cookies);
-  console.log('Users object:', users);
   const userID = req.session['user_id'];
   const user = users[userID];
   const userURLs = urlsForUser(urlDatabase, userID);
@@ -87,17 +84,13 @@ app.get('/urls/:shortURL', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  console.log('Post URLS cookies', req.cookies);
   const userID = req.session['user_id'];
-  console.log(users);
   const longURL = req.body.longURL;
   const shortURL = generateRandomString();
-  //urlDatabase[shortURL] = longURL;
   urlDatabase[shortURL] = {
     longURL: longURL,
     userID: userID
   }
-  //console.log(urlDatabase);
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -107,8 +100,6 @@ app.get('/henlo', (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
-  console.log(req.cookies);
-  console.log(longURL);
   if (longURL.userID) {
     res.redirect(longURL.longURL);
   } else if (longURL && !longURL['user_id']) {
@@ -135,9 +126,6 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.post('/urls/:id', (req, res) => {
-  // console.log('Req params:', req.params);
-  // console.log('Req body', req.body);
-  // console.log(`Req cookies:`, req.cookies);
   const userID = req.session['user_id'];
   if (userID) {
     urlDatabase[req.params.id] = {
@@ -163,18 +151,11 @@ app.get('/login', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  console.log('Login req body:', req.body);
-  console.log('Login req params:', req.params);
-  console.log('Login req cookies:', req.cookies);
-  // console.log('Login req session body:', req.session._ctx.body); just the same as req body
-  console.log('Users in login request:', users);
   const email = req.body.email;
   const userID = getUserByEmail(users, email);
-  console.log(`UserID: ${userID}`);
   if (userID) {
     const hashedPassword = users[userID].password;
     if (bcrypt.compareSync(req.body.password, hashedPassword)) {
-      //res.cookie('user_id', userID);
       req.session['user_id'] = userID;
       res.redirect('/urls');
     } else {
@@ -186,13 +167,11 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  //res.clearCookie('user_id');
   req.session = null;
   res.redirect('/urls');
 });
 
 app.get('/register', (req, res) => {
-  console.log('Get register cookies', req.cookies);
   const userID = req.session['user_id'];
   const user = users[userID];
   const templateVars = {
@@ -204,7 +183,6 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  console.log('Post register cookies', req.cookies);
   const email = req.body.emailAddress;
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
@@ -223,7 +201,6 @@ app.post('/register', (req, res) => {
     password: hashedPassword
   };
   users[id] = user;
-  console.log('User ID in register post:', user.id);
   req.session['user_id'] = user.id;
   res.redirect('/urls');
 });
