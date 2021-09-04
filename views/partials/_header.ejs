@@ -11,9 +11,9 @@
       </div>
     </div>
     <% console.log('Locals:', locals) %>
-    <% if (locals.userID) { %>
+    <% if (userID) { %>
       <form method="POST" action="/logout">
-        Logged in as <%= locals.email %>
+        Logged in as <%= email %>
         <button type="submit" class="btn btn-secondary">Logout</button>
       </form>
     <% } else { %>

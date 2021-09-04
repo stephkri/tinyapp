@@ -11,7 +11,7 @@
 <body>
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
-    <% if (locals.userID && Object.keys(urls).length !== 0) { %>
+    <% if (userID && !urlsZero) { %>
     <h3>My URLs</h3>
     <table class="table">
       <thead>
@@ -40,7 +40,7 @@
         <% } %>
       </tbody>
     </table>
-    <% } else if (locals.userID && Object.keys(urls).length === 0) { %>
+    <% } else if (userID) { %>
       <h3>No current URLs!</h3>
       <p>Why not <a href="/urls/new">make a new URL</a> to get started.</p>
     <% } else { %>
