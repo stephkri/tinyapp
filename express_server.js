@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
-const { generateRandomString, emailExists, urlsForUser, getUserByEmail, sameUser } = require('./helpers.js');
+const { generateRandomString, emailExists, urlsForUser, getUserByEmail, sameUser, isInUserURLs } = require('./helpers.js');
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';
@@ -69,10 +69,9 @@ app.get('/urls/new', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const userID = req.session['user_id'];
   const user = users[userID];
+  const short = req.params.shortURL;
   const userURLs = urlsForUser(urlDatabase, userID);
-  console.log('User ID in shortURL get:', userID);
-  if (sameUser(userURLs, userID)) {
-    const short = req.params.shortURL;
+  if (isInUserURLs(userURLs, short)) {
     const templateVars = {
     urls: userURLs,
     shortURL: short,
@@ -140,7 +139,7 @@ app.post('/urls/:id', (req, res) => {
   // console.log('Req body', req.body);
   // console.log(`Req cookies:`, req.cookies);
   const userID = req.session['user_id'];
-  if (req.cookies['user_id']) {
+  if (userID) {
     urlDatabase[req.params.id] = {
       longURL: req.body.newURL,
       userID: userID

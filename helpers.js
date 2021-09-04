@@ -34,5 +34,13 @@ const sameUser = function(obj, user) {
   }
   return false;
 };
+const isInUserURLs = function(obj, link) {
+  for (const url in obj) {
+    if (url === link) {
+      return true;
+    }
+  }
+  return false;
+}
 
-module.exports = { generateRandomString, emailExists, urlsForUser, getUserByEmail, sameUser };
+module.exports = { generateRandomString, emailExists, urlsForUser, getUserByEmail, sameUser, isInUserURLs };
