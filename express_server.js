@@ -190,17 +190,17 @@ app.post('/register', (req, res) => {
   if (emailExists(users, email)) {
     res.status(403);
     res.send('The email you have provided is already in our user database. ' + hereRegister);
-  }
-  if (email === "" || password === "") {
+  } else if (email === "" || password === "") {
     res.status(403);
     res.send('Please enter an email and password. ' + hereRegister);
+  } else {
+    const user = {
+      id: id,
+      email: email,
+      password: hashedPassword
+    };
+    users[id] = user;
+    req.session['user_id'] = user.id;
+    res.redirect('/urls');
   }
-  const user = {
-    id: id,
-    email: email,
-    password: hashedPassword
-  };
-  users[id] = user;
-  req.session['user_id'] = user.id;
-  res.redirect('/urls');
 });
