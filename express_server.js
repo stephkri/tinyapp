@@ -6,53 +6,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
-const generateRandomString = function() {
- return Math.random().toString(36).substr(2, 6);
-};
-const emailExists = function(object, email) {
-  for (const user in object) {
-    if (object[user].email === email) {
-      return true;
-    }
-  }
-  return false;
-};
-const passwordLookup = function(object, email, password) {
-  for (const user in object) {
-    if (object[user].email === email && object[user].password === password) {
-      return true;
-    }
-  }
-  return false;
-};
-const urlsForUser = function(db, id) {
-  let newObj = {};
-  console.log('urlsForUser function:');
-  for (const url in db) {
-    console.log(db[url]);
-    if (db[url].userID === id) {
-      newObj[url] = db[url];
-    }
-  }
-  return newObj;
-};
-const getUserByEmail = function(obj, email) {
-  for (const user in obj) {
-    if (obj[user].email === email) {
-      return obj[user].id;
-    }
-  }
-  return null;
-};
-const sameUser = function (obj, user) {
-  for (const link in obj) {
-    console.log('Same user function', obj[link]);
-    if (obj[link].userID === user) {
-      return true;
-    }
-  }
-  return false;
-};
+const { generateRandomString, emailExists, urlsForUser, getUserByEmail, sameUser } = require('./helpers.js');
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';
