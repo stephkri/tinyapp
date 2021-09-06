@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
-const { generateRandomString, urlsForUser, getUserByEmail, isInUserURLs } = require('./helpers.js');
+const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs } = require('./helpers.js');
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';
@@ -151,7 +151,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', (req, res) => {
   const email = req.body.email;
-  const userID = getUserByEmail(users, email);
+  const userID = getUserIDByEmail(users, email);
   if (userID) {
     const hashedPassword = users[userID].password;
     if (bcrypt.compareSync(req.body.password, hashedPassword)) {
@@ -185,7 +185,7 @@ app.post('/register', (req, res) => {
   const password = req.body.password;
   const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
-  if (getUserByEmail(users, email)) {
+  if (getUserIDByEmail(users, email)) {
     res.status(403);
     res.send('The email you have provided is already in our user database. ' + hereRegister);
   } else if (email === "" || password === "") {

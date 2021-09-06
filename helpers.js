@@ -10,7 +10,7 @@ const urlsForUser = function(db, id) {
   }
   return newObj;
 };
-const getUserByEmail = function(obj, email) {
+const getUserIDByEmail = function(obj, email) {
   for (const user in obj) {
     if (obj[user].email === email) {
       return user;
@@ -27,4 +27,4 @@ const isInUserURLs = function(obj, link) {
   return false;
 };
 
-module.exports = { generateRandomString, urlsForUser, getUserByEmail, isInUserURLs };
+module.exports = { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs };

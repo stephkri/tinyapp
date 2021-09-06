@@ -1,6 +1,6 @@
 const { assert } = require("chai");
 
-const { generateRandomString, urlsForUser, getUserByEmail, isInUserURLs } = require('../helpers.js');
+const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -22,15 +22,15 @@ const testURLs = {
   "89sdf7": { longURL: "http://www.youtube.com", userID: "123456"}
 };
 
-describe('getUserByEmail', () => {
+describe('getUserIDByEmail', () => {
   it('should return a user with valid email', () => {
-    const user = getUserByEmail(testUsers, "user@example.com");
+    const user = getUserIDByEmail(testUsers, "user@example.com");
     const expectedOutput = "userRandomID";
     assert.equal(user, expectedOutput);
   });
 
   it('should return undefined with an invalid email', () => {
-    const invalidUser = getUserByEmail(testUsers, "ijsdfjnbs@sjndf.com");
+    const invalidUser = getUserIDByEmail(testUsers, "ijsdfjnbs@sjndf.com");
     assert.equal(invalidUser, undefined);
   });
 });
