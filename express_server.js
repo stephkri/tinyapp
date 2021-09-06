@@ -143,7 +143,6 @@ app.get('/login', (req, res) => {
   const userID = req.session['user_id'];
   const user = users[userID];
   const templateVars = {
-    urls: urlDatabase,
     userID: userID,
     email: user ? user.email : null
   };
@@ -175,7 +174,6 @@ app.get('/register', (req, res) => {
   const userID = req.session['user_id'];
   const user = users[userID];
   const templateVars = {
-    urls: urlDatabase,
     userID: userID,
     email: user ? user.email : null
   };
