@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const generateRandomString = function() {
   return Math.random().toString(36).substr(2, 6);
 };
@@ -26,5 +28,13 @@ const isInUserURLs = function(obj, link) {
   }
   return false;
 };
+const authenticateUser = function(db, email, plainPass) {
+  for (const user in db) {
+    if (db[user].email === email && bcrypt.compareSync(plainPass, db[user].password)) {
+      return true;
+    }
+  }
+  return false;
+};
 
-module.exports = { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs };
+module.exports = { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser };
