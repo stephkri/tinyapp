@@ -1,6 +1,6 @@
 const { assert } = require("chai");
 
-const { generateRandomString, emailExists, urlsForUser, getUserByEmail, isInUserURLs } = require('../helpers.js');
+const { generateRandomString, urlsForUser, getUserByEmail, isInUserURLs } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -32,18 +32,6 @@ describe('getUserByEmail', () => {
   it('should return undefined with an invalid email', () => {
     const invalidUser = getUserByEmail(testUsers, "ijsdfjnbs@sjndf.com");
     assert.equal(invalidUser, undefined);
-  });
-});
-
-describe('emailExists', () => {
-  it('should return true if the input email exists', () => {
-    const doesItExist = emailExists(testUsers, "user@example.com");
-    assert.equal(doesItExist, true);
-  });
-
-  it('should return false if the input email does not exist', () => {
-    const doesItExist = emailExists(testUsers, "jndfsdf@dfkjnsfg.com");
-    assert.equal(doesItExist, false);
   });
 });
 

@@ -1,14 +1,6 @@
 const generateRandomString = function() {
   return Math.random().toString(36).substr(2, 6);
 };
-const emailExists = function(object, email) {
-  for (const user in object) {
-    if (object[user].email === email) {
-      return true;
-    }
-  }
-  return false;
-};
 const urlsForUser = function(db, id) {
   let newObj = {};
   for (const url in db) {
@@ -35,4 +27,4 @@ const isInUserURLs = function(obj, link) {
   return false;
 };
 
-module.exports = { generateRandomString, emailExists, urlsForUser, getUserByEmail, isInUserURLs };
+module.exports = { generateRandomString, urlsForUser, getUserByEmail, isInUserURLs };
