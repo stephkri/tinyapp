@@ -1,6 +1,7 @@
 const { assert } = require("chai");
+const bcrypt = require('bcrypt');
 
-const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs } = require('../helpers.js');
+const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser } = require('../helpers.js');
 
 const testUsers = {
   "userRandomID": {
@@ -66,3 +67,28 @@ describe('isInUserURLs', () => {
     assert.equal(isInUserURLs(userURLs, short), false);
   });
 });
+
+/*
+describe('authenticateUser', () => {
+  console.log(testUsers['userRandomID'].password);
+  console.log(testUsers['user2RandomID'].password);
+  const hashedPassOne = bcrypt.hashSync(testUsers['userRandomID'].password, 10);
+  const hashedPassTwo = bcrypt.hashSync(testUsers['user2RandomID'].password, 10);
+  console.log(hashedPassOne, hashedPassTwo);
+  const authTestUsers = {
+    "userRandomID": {
+      id: "userRandomID",
+      email: "user@example.com",
+      password: hashedPassOne
+    },
+    "user2RandomID": {
+      id: "user2RandomID",
+      email: "user2@example.com",
+      password: hashedPassTwo
+    }
+  };
+  it('should return true if correct email and password are entered', () => {
+    assert.isTrue(authenticateUser(authTestUsers, 'userRandomID', 'purple-monkey-dinosaur'));
+  });
+});
+*/

@@ -29,8 +29,12 @@ const isInUserURLs = function(obj, link) {
   return false;
 };
 const authenticateUser = function(db, email, plainPass) {
+  console.log('Argument email: ', email);
+  console.log('Argument plainpass: ', plainPass);
   for (const user in db) {
-    if (db[user].email === email && bcrypt.compareSync(plainPass, db[user].password)) {
+    console.log('User email: ', db[user].email);
+    console.log('User pass: ', db[user].password);
+    if (db[user].email === email && bcrypt.compareSync(db[user].password, plainPass)) {
       return true;
     }
   }

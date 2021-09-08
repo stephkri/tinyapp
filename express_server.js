@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
-const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs } = require('./helpers.js');
+const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser } = require('./helpers.js');
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';
