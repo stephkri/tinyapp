@@ -122,7 +122,7 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   if (!longURL) {
     res.status(404);
-    res.send('This URL has not been properly registered. ' + hereGoBack);
+    res.send('This URL has not been properly registered or is not a valid URL. ' + hereGoBack);
     return;
   }
   if (longURL.userID) {
