@@ -69,6 +69,7 @@ describe('isInUserURLs', () => {
 });
 
 /*
+(can't figure out how to make this thing work)
 describe('authenticateUser', () => {
   console.log(testUsers['userRandomID'].password);
   console.log(testUsers['user2RandomID'].password);
