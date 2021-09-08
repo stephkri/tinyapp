@@ -38,15 +38,20 @@ app.get('/', (req, res) => {
 
 app.get('/urls', (req, res) => {
   const userID = req.session['user_id'];
-  const user = users[userID];
-  const userURLs = urlsForUser(urlDatabase, userID);
-  const templateVars = {
-    urls: userURLs,
-    urlsZero: Object.keys(userURLs).length === 0 ? true : false,
-    userID: userID,
-    email: user ? user.email : null
-  };
-  res.render('urls_index', templateVars);
+  if (userID) {
+    const user = users[userID];
+    const userURLs = urlsForUser(urlDatabase, userID);
+    const templateVars = {
+      urls: userURLs,
+      urlsZero: Object.keys(userURLs).length === 0 ? true : false,
+      userID: userID,
+      email: user ? user.email : null
+    };
+    res.render('urls_index', templateVars);
+    return;
+  }
+  res.status(403);
+  res.send('You must be logged in to view your URL database. ' + hereLoginOrRegister);
 });
 
 app.get('/urls.json', (req, res) => {
@@ -55,12 +60,17 @@ app.get('/urls.json', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   const userID = req.session['user_id'];
-  const user = users[userID];
-  const templateVars = {
+  if (userID) {
+    const user = users[userID];
+    const templateVars = {
     userID: userID,
     email: user ? user.email : null
-  };
-  res.render("urls_new", templateVars);
+    };
+    res.render("urls_new", templateVars);
+    return;
+  }
+  res.status(403);
+  res.send('You must be logged in to make a new URL. ' + hereLoginOrRegister);
 });
 
 app.get('/urls/:shortURL', (req, res) => {
@@ -77,21 +87,31 @@ app.get('/urls/:shortURL', (req, res) => {
       email: user ? user.email : null
     };
     res.render("urls_show", templateVars);
-  } else {
+    return;
+  }
+  if (urlDatabase[short]) {
     res.status(403);
     res.send('This link can only be viewed by the user that created it. ' + hereGoBack);
+    return;
   }
+  res.status(404);
+  res.send('This link does not exist in our database. ' + hereGoBack);
 });
 
 app.post('/urls', (req, res) => {
   const userID = req.session['user_id'];
-  const longURL = req.body.longURL;
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = {
-    longURL: longURL,
-    userID: userID
-  };
-  res.redirect(`/urls/${shortURL}`);
+  if (userID) {
+    const longURL = req.body.longURL;
+    const shortURL = generateRandomString();
+    urlDatabase[shortURL] = {
+      longURL: longURL,
+      userID: userID
+    };
+    res.redirect(`/urls/${shortURL}`);
+    return;
+  }
+  res.status(403);
+  res.send('You must be logged in to make a new URL. ' + hereLoginOrRegister);
 });
 
 app.get('/henlo', (req, res) => {
@@ -100,29 +120,44 @@ app.get('/henlo', (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
+  if (!longURL) {
+    res.status(404);
+    res.send('This URL has not been properly registered. ' + hereGoBack);
+    return;
+  }
   if (longURL.userID) {
     res.redirect(longURL.longURL);
-  } else if (longURL && !longURL['user_id']) {
-    res.redirect(longURL);
-  } else {
-    res.send('Invalid URL! ' + hereGoBack);
+    return;
   }
+  if (longURL && !longURL['user_id']) {
+    res.redirect(longURL);
+    return;
+  }
+  res.send('Invalid URL! ' + hereGoBack);
+  return;
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   const userID = req.session['user_id'];
   const user = users[userID];
   const longURL = urlDatabase[req.params.shortURL];
+  const longID = longURL.userID;
   if (!user) {
     res.status(403);
     res.send('You must login before deleting a URL. ' + hereLogin);
+    return;
+  }
+  if (longID !== userID) {
+    res.status(403);
+    res.send('This URL can only be deleted by its creator. ' + hereGoBack);
+    return;
   }
   if (longURL) {
     delete urlDatabase[req.params.shortURL];
     res.redirect('/urls');
-  } else {
-    res.send('Invalid URL! ' + hereGoBack);
+    return;
   }
+  res.send('Invalid URL! ' + hereGoBack);
 });
 
 app.post('/urls/:id', (req, res) => {
@@ -133,10 +168,10 @@ app.post('/urls/:id', (req, res) => {
       userID: userID
     };
     res.redirect('/urls');
-  } else {
-    res.status(403);
-    res.send('You cannot edit this as you are not logged in. ' + hereLogin);
+    return;
   }
+  res.status(403);
+  res.send('You cannot edit this as you are not logged in. ' + hereLogin);
 });
 
 app.get('/login', (req, res) => {
@@ -157,12 +192,12 @@ app.post('/login', (req, res) => {
     if (bcrypt.compareSync(req.body.password, hashedPassword)) {
       req.session['user_id'] = userID;
       res.redirect('/urls');
-    } else {
-      res.send('Invalid password. ' + hereLogin);
-    }
-  } else {
-    res.send('Invalid username. ' + hereLoginOrRegister);
+      return;
+    } 
+    res.send('Invalid password. ' + hereLogin);
+    return;
   }
+  res.send('Invalid username. ' + hereLoginOrRegister);
 });
 
 app.post('/logout', (req, res) => {
@@ -188,17 +223,19 @@ app.post('/register', (req, res) => {
   if (getUserIDByEmail(users, email)) {
     res.status(403);
     res.send('The email you have provided is already in our user database. ' + hereRegister);
-  } else if (email === "" || password === "") {
+    return;
+  } 
+  if (email === "" || password === "") {
     res.status(403);
     res.send('Please enter an email and password. ' + hereRegister);
-  } else {
-    const user = {
-      id: id,
-      email: email,
-      password: hashedPassword
-    };
-    users[id] = user;
-    req.session['user_id'] = user.id;
-    res.redirect('/urls');
+    return;
   }
+  const user = {
+    id: id,
+    email: email,
+    password: hashedPassword
+  };
+  users[id] = user;
+  req.session['user_id'] = user.id;
+  res.redirect('/urls');
 });
