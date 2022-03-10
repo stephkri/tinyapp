@@ -122,10 +122,6 @@ app.post('/urls', (req, res) => {
   res.send('You must be logged in to make a new URL. ' + hereLoginOrRegister);
 });
 
-app.get('/henlo', (req, res) => {
-  res.send('<html><body>henlo <b>bröther</b></body></html>');
-});
-
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   if (longURL) {
