@@ -36,7 +36,7 @@ app.listen(PORT, () => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Default page');
+  res.send('Please go to /urls to begin using Tinyapp');
 });
 
 app.get('/urls', (req, res) => {
