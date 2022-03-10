@@ -194,6 +194,7 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const userID = getUserIDByEmail(users, email);
+  const plainPass = req.body.password;
   // if the email is in the database
   if (userID) {
     const hashedPassword = users[userID].password;
