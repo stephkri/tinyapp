@@ -36,7 +36,7 @@ app.listen(PORT, () => {
 });
 
 app.get('/', (req, res) => {
-  res.send('henlo uwu');
+  res.send('Default page');
 });
 
 app.get('/urls', (req, res) => {
