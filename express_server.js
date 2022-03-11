@@ -3,7 +3,6 @@ const app = express();
 const PORT = 8080;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
 // generateRandomString makes a 6-character alphanumeric string to use as both user ID's and short URL's
