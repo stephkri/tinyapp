@@ -196,6 +196,15 @@ app.post('/login', (req, res) => {
   const userID = getUserIDByEmail(users, email);
   const plainPass = req.body.password;
   // if the email is in the database
+  if (authenticateUser(users, email, plainPass)) {
+    req.session['user_id'] = userID;
+    res.redirect('/urls');
+    return;
+  } else {
+    res.send('Invalid credentials. ' + hereLogin);
+    return;
+  }
+  /*
   if (userID) {
     const hashedPassword = users[userID].password;
     // if the password is correct
@@ -210,6 +219,7 @@ app.post('/login', (req, res) => {
   }
   // if email does not exist
   res.send('Invalid username. ' + hereLoginOrRegister);
+  */
 });
 
 app.post('/logout', (req, res) => {
