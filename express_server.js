@@ -10,7 +10,7 @@ const cookieSession = require('cookie-session');
 // urlsForUser looks inside the URL database and returns an object with only those URL's made by the specified user
 // getUserIDByEmail looks inside the users object and returns the user ID if the email is present in the database. Returns null if there is no match
 // isInUserUrls looks inside a single user's URL database and checks to see if a certain tiny URL has indeed been made by them
-const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser } = require('./helpers.js');
+const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser, generateUser } = require('./helpers.js');
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';

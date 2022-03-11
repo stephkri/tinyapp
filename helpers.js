@@ -42,4 +42,4 @@ const generateUser = function(db, email, plainPass) {
 
 };
 
-module.exports = { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser };
+module.exports = { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser, generateUser };
