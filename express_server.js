@@ -194,21 +194,15 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const email = req.body.email;
   const userID = getUserIDByEmail(users, email);
-  // if the email is in the database
-  if (userID) {
-    const hashedPassword = users[userID].password;
-    // if the password is correct
-    if (bcrypt.compareSync(req.body.password, hashedPassword)) {
-      req.session['user_id'] = userID;
-      res.redirect('/urls');
-      return;
-    }
-    // if email exists but password is incorrect
-    res.send('Invalid password. ' + hereLogin);
+  const plainPass = req.body.password;
+  if (authenticateUser(users, email, plainPass)) {
+    req.session['user_id'] = userID;
+    res.redirect('/urls');
+    return;
+  } else {
+    res.send('Invalid credentials. ' + hereLogin);
     return;
   }
-  // if email does not exist
-  res.send('Invalid username. ' + hereLoginOrRegister);
 });
 
 app.post('/logout', (req, res) => {
