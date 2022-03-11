@@ -223,8 +223,6 @@ app.post('/register', (req, res) => {
   const email = req.body.emailAddress;
   // plaintext password, then hash it
   const password = req.body.password;
-  // const hashedPassword = bcrypt.hashSync(password, 10);
-  // const id = generateRandomString();
   // if the email already exists in the database
   if (getUserIDByEmail(users, email)) {
     res.status(403);
