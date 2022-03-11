@@ -38,4 +38,8 @@ const authenticateUser = function(db, email, plainPass) {
   return false;
 };
 
+const generateUser = function(db, email, plainPass) {
+
+};
+
 module.exports = { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser };
