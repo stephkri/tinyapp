@@ -224,8 +224,8 @@ app.post('/register', (req, res) => {
   const email = req.body.emailAddress;
   // plaintext password, then hash it
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const id = generateRandomString();
+  // const hashedPassword = bcrypt.hashSync(password, 10);
+  // const id = generateRandomString();
   // if the email already exists in the database
   if (getUserIDByEmail(users, email)) {
     res.status(403);
@@ -239,12 +239,8 @@ app.post('/register', (req, res) => {
     return;
   }
   // if everything is good, add the user object to the main user database object
-  const user = {
-    id: id,
-    email: email,
-    password: hashedPassword
-  };
-  users[id] = user;
+  const user = generateUser(email, password)
+  users[user.id] = user;
   req.session['user_id'] = user.id;
   res.redirect('/urls');
 });
