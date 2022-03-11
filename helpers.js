@@ -38,8 +38,15 @@ const authenticateUser = function(db, email, plainPass) {
   return false;
 };
 
-const generateUser = function(db, email, plainPass) {
+const generateUser = function(email, plainPass) {
+  const hashedPass = bcrypt.hashSync(plainPass, 10);
+  const id = generateRandomString();
 
+  return {
+    id: id,
+    email: email,
+    password: hashedPass
+  }
 };
 
 module.exports = { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser, generateUser };
