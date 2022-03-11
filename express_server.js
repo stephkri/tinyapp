@@ -3,14 +3,13 @@ const app = express();
 const PORT = 8080;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const bcrypt = require('bcrypt');
 const cookieSession = require('cookie-session');
 
 // generateRandomString makes a 6-character alphanumeric string to use as both user ID's and short URL's
 // urlsForUser looks inside the URL database and returns an object with only those URL's made by the specified user
 // getUserIDByEmail looks inside the users object and returns the user ID if the email is present in the database. Returns null if there is no match
 // isInUserUrls looks inside a single user's URL database and checks to see if a certain tiny URL has indeed been made by them
-const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser } = require('./helpers.js');
+const { generateRandomString, urlsForUser, getUserIDByEmail, isInUserURLs, authenticateUser, generateUser } = require('./helpers.js');
 
 const hereGoBack = 'Click <a href="/urls">here</a> to go back to the database.';
 const hereLogin = 'Click <a href="/login">here</a> to login.';
@@ -224,8 +223,6 @@ app.post('/register', (req, res) => {
   const email = req.body.emailAddress;
   // plaintext password, then hash it
   const password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const id = generateRandomString();
   // if the email already exists in the database
   if (getUserIDByEmail(users, email)) {
     res.status(403);
@@ -239,12 +236,8 @@ app.post('/register', (req, res) => {
     return;
   }
   // if everything is good, add the user object to the main user database object
-  const user = {
-    id: id,
-    email: email,
-    password: hashedPassword
-  };
-  users[id] = user;
+  const user = generateUser(email, password)
+  users[user.id] = user;
   req.session['user_id'] = user.id;
   res.redirect('/urls');
 });
